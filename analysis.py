@@ -1,4 +1,5 @@
 from cProfile import label
+import datetime
 from turtle import color
 from matplotlib import dates
 from numpy import diff
@@ -50,6 +51,8 @@ def show_historical():
   filtered_vix = vix.query(f"Date >= '{common_start_date}'")
   filtered_ticker = ticker.query(f"Date >= '{common_start_date}'")
 
+  show_gain_loss(filtered_vix, filtered_ticker, ticker_name)  
+
   # plot data with matplotlib                            
   filtered_vix['Close'].plot(label = 'VIX (Market Volatility)')
   filtered_ticker['Close'].plot(label = TICKER_FILE_NAME.strip('.csv'))
@@ -58,7 +61,7 @@ def show_historical():
   plt.ylabel('Index')
   plt.legend(loc="upper right")
   plt.show()
-  show_gain_loss(filtered_vix, filtered_ticker, ticker_name)
+  
 
 def analyze_correlation(vix_trend, ticker_trend, ticker_name, dates):
   yes = 0
@@ -133,7 +136,7 @@ def show_gain_loss(vix, ticker, ticker_name):
 def show_recent(use_inverse, show_analysis):
   symbols = ['^VIX', 'VFIAX']
   tickers = yf.Tickers(symbols)
-  df = tickers.download(group_by='ticker', start='2022-01-01')
+  df = tickers.download(group_by='ticker', start=f'{datetime.date.today().year}-01-01')
 
   vix = df['^VIX']
   vix_close = vix['Close'].to_list()
